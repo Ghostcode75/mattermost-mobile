@@ -350,42 +350,93 @@ const handleSwitchToDefaultChannel = (teamId) => {
 };
 
 const launchSelectServer = () => {
-    Navigation.startSingleScreenApp({
-        screen: {
-            screen: 'SelectServer',
-            navigatorStyle: {
-                navBarHidden: true,
-                statusBarHidden: false,
-                statusBarHideWithNavBar: false,
-                screenBackgroundColor: 'transparent',
+    Navigation.setRoot({
+        root: {
+            stack: {
+                children: [{
+                    component: {
+                        name: 'SelectServer',
+                        passProps: {
+                            allowOtherServers: app.allowOtherServers,
+                        },
+                    },
+                }],
+                options: {
+                    layout: {
+                        backgroundColor: 'transparent',
+                    },
+                    statusBar: {
+                        hideWithTopBar: true, // TODO is this actually needed
+                        visible: true,
+                    },
+                    topBar: {
+                        visible: false,
+                    },
+                },
             },
         },
-        passProps: {
-            allowOtherServers: app.allowOtherServers,
-        },
-        appStyle: {
-            orientation: 'auto',
-        },
-        animationType: 'fade',
     });
+
+    // Navigation.startSingleScreenApp({
+    //     screen: {
+    //         screen: 'SelectServer',
+    //         navigatorStyle: {
+    //             navBarHidden: true,
+    //             statusBarHidden: false,
+    //             statusBarHideWithNavBar: false,
+    //             screenBackgroundColor: 'transparent',
+    //         },
+    //     },
+    //     passProps: {
+    //         allowOtherServers: app.allowOtherServers,
+    //     },
+    //     appStyle: {
+    //         orientation: 'auto', // TODO
+    //     },
+    //     animationType: 'fade', // TODO
+    // });
 };
 
 const launchChannel = () => {
-    Navigation.startSingleScreenApp({
-        screen: {
-            screen: 'Channel',
-            navigatorStyle: {
-                navBarHidden: true,
-                statusBarHidden: false,
-                statusBarHideWithNavBar: false,
-                screenBackgroundColor: 'transparent',
+    Navigation.setRoot({
+        root: {
+            stack: {
+                children: [{
+                    component: {
+                        name: 'Channel',
+                    },
+                }],
+                options: {
+                    layout: {
+                        backgroundColor: 'transparent',
+                    },
+                    statusBar: {
+                        hideWithTopBar: true, // TODO is this actually needed
+                        visible: true,
+                    },
+                    topBar: {
+                        visible: false,
+                    },
+                },
             },
         },
-        appStyle: {
-            orientation: 'auto',
-        },
-        animationType: 'fade',
     });
+
+    // Navigation.startSingleScreenApp({
+    //     screen: {
+    //         screen: 'Channel',
+    //         navigatorStyle: {
+    //             navBarHidden: true,
+    //             statusBarHidden: false,
+    //             statusBarHideWithNavBar: false,
+    //             screenBackgroundColor: 'transparent',
+    //         },
+    //     },
+    //     appStyle: {
+    //         orientation: 'auto', // TODO
+    //     },
+    //     animationType: 'fade', // TODO
+    // });
 };
 
 const handleAppStateChange = (appState) => {
@@ -445,30 +496,41 @@ const handleAppInActive = () => {
 AppState.addEventListener('change', handleAppStateChange);
 
 const launchEntry = () => {
-    telemetry.start([
-        'start:select_server_screen',
-        'start:channel_screen',
-    ]);
+    Navigation.events().registerAppLaunchedListener(() => {
+        telemetry.start([
+            'start:select_server_screen',
+            'start:channel_screen',
+        ]);
 
-    Navigation.startSingleScreenApp({
-        screen: {
-            screen: 'Entry',
-            navigatorStyle: {
-                navBarHidden: true,
-                statusBarHidden: false,
-                statusBarHideWithNavBar: false,
+        Navigation.setRoot({
+            root: {
+                stack: {
+                    children: [{
+                        component: {
+                            name: 'Entry',
+                            passProps: {
+                                initializeModules,
+                            },
+                        },
+                    }],
+                    options: {
+                        layout: {
+                            backgroundColor: 'transparent',
+                        },
+                        statusBar: {
+                            hideWithTopBar: true, // TODO is this actually needed
+                            visible: true,
+                        },
+                        topBar: {
+                            visible: false,
+                        },
+                    },
+                },
             },
-        },
-        passProps: {
-            initializeModules,
-        },
-        appStyle: {
-            orientation: 'auto',
-        },
-        animationType: 'fade',
-    });
+        });
 
-    telemetry.startSinceLaunch(['start:splash_screen']);
+        telemetry.startSinceLaunch(['start:splash_screen']);
+    });
 };
 
 configurePushNotifications();
